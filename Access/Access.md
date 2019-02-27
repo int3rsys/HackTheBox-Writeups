@@ -87,7 +87,8 @@ Now we have the email file itself. It contains a username and a password. It's p
 C:\Users\security\Desktop>type user.txt
 ***
 ```
-After searching for interesting files I have found this one in the desktop. It seems like a hash. 
+we also have a password for root.txt.
+From here, I was stuck, so I took a few hints from hackthebox.eu. As it seems, there is a program called cmdkey.exe which stores all domain user credentials for use on a specific target machines. 
 
 
 
