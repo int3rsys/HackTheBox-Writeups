@@ -1,0 +1,2 @@
+This is the first writeup in the series.
+After accessing to http://10.10.10.98/ we get a picture of servers and a title named "LON-MC6". Searching in the internet for the name results in a server name. Basically, we have nothing else in the webiste. The source code is empty.
