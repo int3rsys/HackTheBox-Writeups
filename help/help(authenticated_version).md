@@ -17,4 +17,4 @@ Now we can authenticate with our credentials. Going through the source code of H
 ```
 $attachment = $db->fetchRow("SELECT *, COUNT(id) AS total FROM ".TABLE_PREFIX."attachments WHERE id=".$db->real_escape_string($params[2])." AND ticket_id=".$params[0]." AND msg_id=".$params[3]);
 ```
- tickets_id and msg_id are not filtered! 
+ tickets_id and msg_id are not filtered, thus we can try and injection sql queries. 
