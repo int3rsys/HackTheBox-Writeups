@@ -68,7 +68,7 @@ Tables_in_moodle
 ```
 we are interested in mdl_user_password_history. For some reason, the output wasn't on the screen so I had to write it into a file, so I reconnected:
 ```
-$ mysql -h localhost -P 3306 -u root -pWelkom1! moodle > output
+$ mysql -h localhost -P 3306 -u root -p**** moodle > output
 select * from mdl_user_password_history;
 \q
 $ cat output
@@ -91,6 +91,4 @@ user.txt  work
 
 Next to root:
 
-
-```
 
