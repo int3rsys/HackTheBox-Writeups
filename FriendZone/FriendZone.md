@@ -158,7 +158,38 @@ creds for the admin THING:
 
 admin:****
 ```
-Now we can access files or any other admin 'thing'. Let's get back to our login page:
+Now we can access files or any other admin 'thing'. Let's get back to our login page. Trying to login will give a rabbit hole -> "ZZzzZzZ". I forgot to add the domain names to hosts file, so I added them:
+(/etc/resolv.conf specifies nameservers in order of search preference.
+/etc/hosts overrides all nameservers by mapping urls/shortnames to IPs)
+```
+127.0.0.1	localhost
+127.0.1.1	kali
+10.10.10.123 admin.friendzoneportal.red
+10.10.10.123 files.friendzoneportal.red
+10.10.10.123 imports.friendzoneportal.red
+10.10.10.123 vpn.friendzoneportal.red
+10.10.10.123 development.friendzoneportal.red
+```
+Now admin.friendzoneportal.red:*443* is accessible. But we still stuck! Let's try to run nikto:
+```
+root@kali:~/Downloads# nikto -host admin.friendzoneportal.red -p 443
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.10.123
++ Target Hostname:    admin.friendzoneportal.red
++ Target Port:        443
+---------------------------------------------------------------------------
++ SSL Info:        Subject:  /C=JO/ST=CODERED/L=AMMAN/O=CODERED/OU=CODERED/CN=friendzone.red/emailAddress=haha@friendzone.red
+                   Ciphers:  ECDHE-RSA-AES256-GCM-SHA384
+                   Issuer:   /C=JO/ST=CODERED/L=AMMAN/O=CODERED/OU=CODERED/CN=friendzone.red/emailAddress=haha@friendzone.red
 
+```
+aha! the certificate is written on the email address haha@friendzone.red. Let's check https://friendzone.red (after adding it's address to the hosts file)
+Okay, we get the following text:
+```
+Testing some functions !
 
+I'am trying not to break things !
+MDlPdDFEbWNMWjE1NTkzOTk4OTZJbUxYUDdWOUJx
+```
 
